@@ -1,11 +1,12 @@
 #preprocess_utils.py
 import pandas as pd
 import numpy as np
+import os
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sentence_transformers import SentenceTransformer
 
 csv_path = "data\Online_Shopping_Data.csv"
-def load_and_preprocess_data(csv_path):
+def load_and_preprocess_data(csv_path, use_saved_embeddings=True):
     df = pd.read_csv(csv_path)
     df['Transaction_Date'] = pd.to_datetime(df['Transaction_Date'], format='%d/%m/%Y')
 
@@ -18,7 +19,7 @@ def load_and_preprocess_data(csv_path):
     le_category = LabelEncoder()
     df['Category_Label'] = le_category.fit_transform(df['Category'])
 
-    # Feature Engineering
+    # --- User Features ---
     latest_date = df['Transaction_Date'].max()
     user_df = df.groupby('Customer_ID').agg({
         'Total_Spent': ['mean', 'sum', 'std'],
@@ -55,7 +56,7 @@ def load_and_preprocess_data(csv_path):
     scaler_user = StandardScaler()
     user_df[user_features] = scaler_user.fit_transform(user_df[user_features])
 
-    # Category features
+    # --- Category Features ---
     cat_df = df.groupby('Category_Label').agg({
         'Total_Spent': ['mean'],
         'Quantity': ['mean'],
@@ -65,15 +66,27 @@ def load_and_preprocess_data(csv_path):
     cat_df.columns = ['Category_Label', 'Spent_mean', 'Qty_mean', 'Price_mean', 'Popularity']
     cat_df['Category_Text'] = le_category.inverse_transform(cat_df['Category_Label'])
 
-    sbert = SentenceTransformer('all-MiniLM-L6-v2')
-    cat_text_vecs = sbert.encode(cat_df['Category_Text'].tolist())
-
     cat_features = ['Spent_mean', 'Qty_mean', 'Price_mean', 'Popularity']
     scaler_cat = StandardScaler()
     cat_df[cat_features] = scaler_cat.fit_transform(cat_df[cat_features])
     cat_numeric = cat_df[cat_features].values
-    cat_combined = np.hstack([cat_numeric, cat_text_vecs])
 
+    # --- Load or Generate SBERT Vectors ---
+    emb_path = os.path.join("saved", "cat_text_vecs.npy")
+    if use_saved_embeddings and os.path.exists(emb_path):
+        cat_text_vecs = np.load(emb_path)
+        print(f"[INFO] Loaded SBERT vectors from {emb_path}")
+    else:
+        print("[INFO] Generating SBERT vectors from scratch...")
+        from sentence_transformers import SentenceTransformer
+        sbert = SentenceTransformer("all-MiniLM-L6-v2")
+        cat_text_vecs = sbert.encode(cat_df['Category_Text'].tolist(), normalize_embeddings=True)
+        os.makedirs("saved", exist_ok=True)
+        np.save(emb_path, cat_text_vecs)
+        print(f"[INFO] Saved SBERT vectors to {emb_path}")
+
+    # Combine numeric + SBERT
+    cat_combined = np.hstack([cat_numeric, cat_text_vecs])
     cat_lookup_array = {c: cat_combined[i] for i, c in enumerate(cat_df['Category_Label'])}
 
     return user_df, cat_df, cat_combined, cat_lookup_array, user_features, le_category

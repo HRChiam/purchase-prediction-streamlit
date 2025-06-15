@@ -19,7 +19,7 @@ st.markdown("""
 # Load Data and Model
 with st.spinner("🔄 Loading data and model..."):
     csv_path = os.path.join("data", "Online_Shopping_Data.csv")
-    user_df, cat_df, cat_combined, cat_lookup_array, user_features, le_category = load_and_preprocess_data(csv_path)
+    user_df, cat_df, cat_combined, cat_lookup_array, user_features, le_category = load_and_preprocess_data(csv_path, use_saved_embeddings=True)
 
     model = ContrastiveModel(input_user=len(user_features), input_cat=cat_combined.shape[1], emb_dim=64)
     model.load_state_dict(torch.load("model.pth", map_location=torch.device('cpu')))
