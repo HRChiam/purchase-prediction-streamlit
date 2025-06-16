@@ -1,26 +1,26 @@
-# 🛍️ Smart Purchase Category Recommender
+# 🏭️ Purchase Category Recommender
 
-An AI-powered shopping assistant that recommends product categories to users based on their shopping behavior. Built using **PyTorch**, **SBERT**, and **Streamlit**.
+An AI-powered shopping assistant that recommends product categories based on users' shopping behavior. Built using **PyTorch**, **SBERT**, and **Streamlit**.
 
 ---
 
 ## 📦 Features
 
-- ✅ Select a real customer from the dataset  
-- ✅ View summarized shopping behavior  
-- ✅ Get top-N personalized category recommendations  
-- ✅ Fast inference with SBERT embeddings  
-- ✅ Easy-to-use Streamlit interface  
+* Select a real customer from the dataset
+* View summarized shopping behavior
+* Get top-N personalized category recommendations
+* Fast inference with SBERT embeddings
+* Simple and interactive Streamlit interface
 
 ---
 
 ## 📊 Project Overview
 
-This project simulates a personalized e-commerce assistant that recommends product categories based on user purchasing behavior. It leverages:
+This project simulates a personalized e-commerce assistant that recommends product categories based on user purchasing behavior. It uses:
 
-- **Contrastive learning** to train on user-category similarity
-- **SBERT embeddings** to encode user profiles and product categories
-- **Streamlit** for interactive visualization and inference
+* **Contrastive learning** to learn similarities between users and product categories
+* **SBERT embeddings** to encode user and product profiles into vector space
+* **Streamlit** for interactive app deployment
 
 ---
 
@@ -39,8 +39,9 @@ purchase-prediction-streamlit/
 │   └── train.py                  # Training script
 ├── model.pth                     # Trained model checkpoint
 ├── requirements.txt              # Project dependencies
-├── README.md                     # This file
-└── .gitignore                    # Ignore logs, models, etc.
+├── README.md                     # Project overview and usage
+├── PROCESS.md                    # Step-by-step reproduction guide
+└── .gitignore                    # Files to exclude from Git
 ```
 
 ---
@@ -56,25 +57,23 @@ cd purchase-prediction-streamlit
 
 ### 2. Install Dependencies
 
-Make sure you are using **Python 3.10+**.
+Ensure Python 3.10+ is installed.
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 3. Download Dataset
+### 3. Dataset Setup
 
-Auto-download via:
+Automatically download dataset:
 
 ```python
 !gdown --id 1XeVEFe9rW2KwWfVmMqVbR78quzKZlHrw --output data/Online_Shopping_Data.csv
 ```
 
-Or manually place `Online_Shopping_Data.csv` into the `data/` directory.
+If download fails, manually place the file in `data/` folder as `Online_Shopping_Data.csv`.
 
----
-
-### 4. Run the Streamlit App
+### 4. Launch the Web App
 
 ```bash
 streamlit run src/app.py
@@ -84,21 +83,21 @@ streamlit run src/app.py
 
 ## 🧠 Model Details
 
-- **Model Type**: Siamese Contrastive Learning Model (PyTorch)
-- **Text Encoder**: [SBERT (Sentence-BERT)](https://www.sbert.net/)
-- **Learning Objective**: Learn embeddings that bring similar users and categories closer in vector space.
+* **Model**: Siamese Contrastive Learning
+* **Embeddings**: SBERT (Sentence-BERT)
+* **Objective**: Learn a shared embedding space for users and product categories
 
-### 📦 Saved Artifacts
+### 📦 Artifacts
 
-- `model.pth` – Trained PyTorch model
-- `user_embeddings.pkl` – Precomputed user vectors
-- `category_embeddings.pkl` – Precomputed category vectors
+* `model.pth`: Trained model checkpoint
+* `user_embeddings.pkl`: Precomputed user vectors
+* `category_embeddings.pkl`: Precomputed category vectors
 
 ---
 
-## 🧪 Reproducibility
+## 🔪 Reproducibility
 
-Ensure consistent results by fixing random seeds:
+Set random seeds to ensure reproducible results:
 
 ```python
 import torch, numpy as np, random
@@ -107,21 +106,20 @@ np.random.seed(42)
 random.seed(42)
 ```
 
-Run training and inference reproducibly using:
-
-- `src/train.py`
-- `src/inference.py`
+To reproduce the full pipeline, follow [PROCESS.md](./PROCESS.md).
 
 ---
 
-## 🧑‍💻 Contributors
+## 👨‍💼 Contributors
 
-Developed by:
+Created by:
 
-- Yap Yu Hang  
-- Tham Wing Shan  
-- Tan Wei Ren  
-- Chiam Huai Ren  
-- Liu Yi Xian  
+* Yap Yu Hang
+* Tham Wing Shan
+* Tan Wei Ren
+* Chiam Huai Ren
+* Liu Yi Xian
 
-For academic and demo purposes.
+For academic and demonstration use.
+
+---

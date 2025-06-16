@@ -1,94 +1,107 @@
 # 🔁 Reproduction Guide - PROCESS.md
 
-This guide explains how to reproduce the results, run the web app, and understand the workflow of the Smart Purchase Category Recommender project.
+This guide walks through how to reproduce results, train the model, and run the web application for the Smart Purchase Category Recommender project.
 
 ---
 
 ## 📦 Prerequisites
 
-- Python 3.10+
-- Install dependencies:
+* Python 3.10+
+* Install required packages:
 
 ```bash
 pip install -r requirements.txt
-````
+```
 
-> Or run the project in [Google Colab](https://colab.research.google.com/drive/1i4ZGkAK_DpP7_7a8t1VeHtHjm6gAiL0r?usp=sharing) without local setup.
+> No setup? Use [Google Colab](https://colab.research.google.com/drive/1i4ZGkAK_DpP7_7a8t1VeHtHjm6gAiL0r?usp=sharing).
 
 ---
 
 ## 📂 Dataset Setup
 
-The dataset is publicly available. It will be automatically downloaded using `gdown`.
+The dataset will be auto-downloaded using `gdown`:
 
-If the automatic download fails, manually download the file from [Google Drive](https://drive.google.com/file/d/1XeVEFe9rW2KwWfVmMqVbR78quzKZlHrw/view?usp=sharing) and place it in the `data/` folder with the name:
+```python
+!gdown --id 1XeVEFe9rW2KwWfVmMqVbR78quzKZlHrw --output data/Online_Shopping_Data.csv
+```
 
-```
-Online_Shopping_Data.csv
-```
+Alternatively, manually download it from [Google Drive](https://drive.google.com/file/d/1XeVEFe9rW2KwWfVmMqVbR78quzKZlHrw/view?usp=sharing) and save it in the `data/` folder.
 
 ---
 
 ## 🧠 Model Training (Optional)
 
-If you want to retrain the model from scratch:
+To retrain the model from scratch:
 
 ```bash
 python src/train.py
 ```
 
-> Trained model will be saved as `model.pth`.
+> This generates a new `model.pth` and updated embedding files.
 
-If you're using the existing model (`model.pth`), skip this step.
+Skip this if you are using the provided `model.pth`.
 
 ---
 
 ## 🔍 Inference
 
-To test the model's recommendation logic:
+To test predictions from embeddings:
 
 ```bash
 python src/inference.py
 ```
 
-This will print sample predictions based on the embeddings.
+Sample recommendations will be printed in the terminal.
 
 ---
 
-## 🌐 Running the Web App
+## 🌐 Run the Streamlit App
 
-To launch the Streamlit application:
+Launch the web application:
 
 ```bash
 streamlit run src/app.py
 ```
 
-You can interact with the app, choose a user ID, and view recommended product categories.
+Interactively explore:
 
-Or visit the **live version** here:
-🔗 [Streamlit Demo](https://purchase-prediction-app-3fqjntw2sygip8mgd7scfa.streamlit.app/)
-
----
-
-## 💻 Google Colab (No Setup Needed)
-
-You can also open the Colab notebook directly here:
-🔗 [Open in Colab](https://colab.research.google.com/drive/1i4ZGkAK_DpP7_7a8t1VeHtHjm6gAiL0r?usp=sharing)
+* Customer profiles
+* Category recommendations
 
 ---
 
-## 📝 Notes
+## 💻 Google Colab Option
 
-* Ensure the dataset file is named correctly and located in the `data/` folder
-* If using Google Colab, you may need to mount Drive to upload model files
-* Recommended for CPU usage; no GPU required unless retraining
+Run the notebook in-browser without setup:
+
+[Open in Colab](https://colab.research.google.com/drive/1i4ZGkAK_DpP7_7a8t1VeHtHjm6gAiL0r?usp=sharing)
+
+---
+
+## 📃 Summary of Artifacts
+
+* `model.pth`: Trained PyTorch model
+* `user_embeddings.pkl`: Serialized user vectors
+* `category_embeddings.pkl`: Serialized category vectors
+* `Online_Shopping_Data.csv`: Source data
+* `src/`: All logic for training, inference, and app
 
 ---
 
-✅ Once you follow the steps above, you will be able to:
+## ✨ Notes
 
-* Run the full pipeline
-* Launch the web app
-* Reproduce the recommendation results
+* The model is deterministic with fixed random seeds:
+
+```python
+import torch, numpy as np, random
+torch.manual_seed(42)
+np.random.seed(42)
+random.seed(42)
+```
+
+* No GPU required for inference or web app
+* All SBERT encodings are precomputed for speed
 
 ---
+
+Once completed, you can reproduce the results, re-train the model, and deploy the app with confidence.
